@@ -19,19 +19,33 @@
   <div class="float-container">
     <div class="float-child">
       <div style="position: relative;">
-        <canvas id="canvas" width="1000" height="800" 
-          style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+        <canvas id="canvas" width="1000px" height="800px" 
+          style="position: absolute; left: 0; top: 0; z-index: 2;"></canvas>
         <canvas id="layercanvas" width="1000" height="800" 
           style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
        </div>
     </div>
-
+    
     <div class="float-child">
       <div>
-
+        <input type="button" id="play" name="play" value="Play" onclick="play()" style="position: absolute; top: 800px;"/>
       </div>
       <div>
-
+        <input type="button" id="pause" name="pause" value="Pause" onclick="pause()" style="position: absolute; top: 820px;"/>
+      </div>
+      <div>
+        <input type="button" id="reset" name="reset" value="Reset" onclick="reset()" style="position: absolute; top: 800px; left: 100px;"/>
+      </div>
+      <div>
+        <input type="button" id="clear" name="clear" value="Clear" onclick="onclear()" style="position: absolute; top: 820px; left: 100px;"/>
+      </div>
+      <div>
+        <label for="showinterplines" style="position: absolute; top:20px; left:1120px;">show interpolated lines</label>
+        <input type="checkbox" id="showinterplines" name="showinterplines" onclick="flipShowInterpLines()" style="position: absolute; top:20px; left:1100px; z-index: 3;"/>
+      </div>
+      <div>
+        <label for="showinterppoints" style="position: absolute; top:60px; left:1120px;">show interpolated points</label>
+        <input type="checkbox" id="showinterppoints" name="showinterppoints" onclick="flipShowInterpPoints()" style="position: absolute; top:60px; left:1100px; z-index: 3;"/>
       </div>
     </div>
   </div>

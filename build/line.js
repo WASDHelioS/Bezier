@@ -12,8 +12,8 @@ class Line{
     draw(ctx) {
         ctx.strokeStyle = this.color;
         ctx.beginPath();
-        ctx.moveTo(this.start.x, this.start.y);
-        ctx.lineTo(this.end.x, this.end.y);
+        ctx.moveTo(this.start.location.x, this.start.location.y);
+        ctx.lineTo(this.end.location.x, this.end.location.y);
         ctx.closePath();
         ctx.stroke();
     }

@@ -10,10 +10,10 @@ class Point {
     }
 
     isWithinBorders(location) {
-        if(location.x > this.location.x-size/2 && 
-           location.x < this.location.x+size/2 &&
-           location.y > this.location.y-size/2 &&
-           location.y < this.location.y+size/2) {
+        if(location.x > this.location.x && 
+           location.x < this.location.x+this.size &&
+           location.y > this.location.y &&
+           location.y < this.location.y+this.size) {
                return true;
            }
            return false;
