@@ -10,10 +10,14 @@ class Point {
     }
 
     isWithinBorders(location) {
-        if(location.x > this.location.x && 
-           location.x < this.location.x+this.size &&
-           location.y > this.location.y &&
-           location.y < this.location.y+this.size) {
+
+        console.log(location);
+        console.log(this);
+        if(location.x > this.location.x-this.size/2-1 && 
+           location.x < this.location.x+this.size/2+1 &&
+           location.y > this.location.y-this.size/2-1 &&
+           location.y < this.location.y+this.size/2+1) {
+               console.log("in");
                return true;
            }
            return false;
@@ -21,7 +25,7 @@ class Point {
 
     draw(ctx) {
         ctx.fillStyle =this.color;
-        ctx.fillRect(this.location.x, this.location.y, this.size, this.size);
+        ctx.fillRect(this.location.x-this.size/2, this.location.y-this.size/2, this.size, this.size);
         //ctx.arc(this.location.x-this.size/2,this.location.y-this.size/2,this.size/2,0, Math.PI);
         //ctx.stroke();
     }

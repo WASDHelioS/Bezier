@@ -1,4 +1,4 @@
-var canvas, ctx, layercanvas, layerctx;
+var canvas, ctx;
 var wWidth = 1000;
 var wHeight = 800;
 
@@ -11,16 +11,23 @@ var dragOffset;
 var activePoints = [];
 var activeLines = [];
 
+var currentBezier = [];
+
 let colorIndex = 0;
 
 var t = 0;
-var increment = 0.01;
+var increment = 0.005;
 
 var gameOver = true;
 var pauseGame = false;
 
 var showinterplines= false;
 var showinterppoints = false;
+
+var showlines = true;
+var showpoints = true;
+
+var boundingrect;
 
 function setup() {
   
@@ -31,17 +38,9 @@ function setup() {
       canvas.addEventListener("mouseup", onFinishedDrag, false);
       canvas.addEventListener("mousemove", dragging, false);
 
-  layercanvas = document.getElementById('layercanvas');
-  if(canvas.getContext)
-      layerctx = layercanvas.getContext('2d');
+  boundingrect = canvas.getBoundingClientRect();
 
   points.push(new Point(new Vector(200,200), 8));
-  points.push(new Point(new Vector(500,200), 8));
-  addLine();
-  points.push(new Point(new Vector(500,500), 8));
-  addLine();
-  points.push(new Point(new Vector(350,700), 8));
-  addLine();
 
   repopulateActives();
   draw();
@@ -63,12 +62,33 @@ function draw() {
   //if show points
 
   for(let point of activePoints) {
-    point.draw(ctx);
+    if(!showpoints && showinterppoints) {
+      if(!points.includes(point)) {
+        point.draw(ctx);
+      }
+    } else if(showpoints && !showinterppoints) {
+      if(points.includes(point)) {
+        point.draw(ctx);
+      }
+    } else if(showpoints && showinterppoints) {
+        point.draw(ctx);
+    }
   }
 
   for(let line of activeLines) {
-    line.draw(ctx);
+    if(!showlines && showinterplines) {
+      if(!lines.includes(line)) {
+        line.draw(ctx);
+      }
+    } else if(showlines && !showinterplines) {
+      if(lines.includes(line)) {
+        line.draw(ctx);
+      }
+    } else if(showlines && showinterplines) {
+      line.draw(ctx);
+    }
   }
+  drawBezier();
 }
 
 function update() {
@@ -83,11 +103,22 @@ function update() {
     }
 }
 
+function drawBezier() {
+  for(let i = 0; i < currentBezier.length-1; i++) {
+      ctx.strokeStyle = "BLACK";
+      ctx.beginPath();
+      ctx.moveTo(currentBezier[i].location.x, currentBezier[i].location.y);
+      ctx.lineTo(currentBezier[i+1].location.x, currentBezier[i+1].location.y);
+      ctx.closePath();
+      ctx.stroke();
+  }
+}
+
 function drawInterpolation(points, t) {
   if(points.length == 1) {
     points[0].size = 2;
     points[0].setColor("DARKGRAY");
-      points[0].draw(layerctx); // draw to layered ctx;
+    currentBezier.push(points[0]);
   } else {
     getNextColor();
     
@@ -136,12 +167,6 @@ function clearCanvas() {
   ctx.clearRect(0,0, wWidth, wHeight);
 }
 
-function clearLayer() {
-  layerctx.fillStyle = "WHITE";
-  layerctx.clearRect(0,0, wWidth, wHeight);
-}
-
-
 function play() {
   if(points.length > 0) {
     gameOver = false;
@@ -159,15 +184,16 @@ function pause() {
 
 function reset() {
   resetCanvasToStartingPoint();
+  currentBezier = [];
   repopulateActives();
   draw();
 }
 
 function onclear() {
-  console.log("clearing");
   resetCanvasToStartingPoint();
   lines = [];
   points = [];
+  currentBezier = [];
   activeLines = [];
   activePoints = [];
   draw();
@@ -178,7 +204,6 @@ function resetCanvasToStartingPoint() {
   t = 0;
   //set slider to t;
   clearCanvas();
-  clearLayer();
 }
 
 function addLine() {
@@ -196,11 +221,19 @@ function flipShowInterpPoints() {
   showinterppoints = !showinterppoints;
 }
 
+function flipShowLines() {
+  showlines = !showlines;
+}
+
+function flipShowPoints() {
+  showpoints = !showpoints;
+}
+
 ////////////Mouse handling
 
 function onClick(event) {
   if(gameOver) {
-    let mouseVector = new Vector(event.clientX, event.clientY);
+    let mouseVector = new Vector(event.clientX - boundingrect.left, event.clientY - boundingrect.top);
     for(let point of points) {
       if(point.isWithinBorders(mouseVector)) {
         draggingPoint = point;
@@ -217,7 +250,6 @@ function onClick(event) {
       if(points.length > 1) {
         addLine();
       }
-      console.log(lines);
       repopulateActives();
       draw();
     }
@@ -226,7 +258,7 @@ function onClick(event) {
 
 function dragging(event) {
   if(draggingPoint != null && gameOver) {
-    let mouseVector = new Vector(event.clientX + dragOffset.x, event.clientY + dragOffset.y);
+    let mouseVector = new Vector(event.clientX + dragOffset.x - boundingrect.left, event.clientY + dragOffset.y - boundingrect.top);
     draggingPoint.location = mouseVector;
     repopulateActives();
     draw();
